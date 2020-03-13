@@ -1,0 +1,404 @@
+---
+title: "Sanchez-Kevin-ADA-homework-2"
+author: "Kevin Sanchez"
+date: "3/13/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Challenge 1
+
+```{r}
+library(readr)
+library(dplyr)
+f <- "https://raw.githubusercontent.com/difiore/ADA-datasets/master/IMDB-movies.csv"
+d <- read_csv(f, col_names = TRUE)
+d_filt <- filter(d, between(d$startYear, 1920, 1979) & d$runtimeMinutes < 240) %>% mutate("decade" = paste(startYear - (startYear %% 10), "s", sep = ""))
+
+library(ggplot2)
+d_plot <- ggplot(data = d_filt, aes(
+  x = d_filt$runtimeMinutes))
+d_plot <- d_plot + xlab("Running Time (min)") + ylab("Number of Movies")
+d_plot <- d_plot + geom_histogram(na.rm = TRUE)
+d_plot <- d_plot + facet_wrap(~d_filt$decade, ncol = 3)
+d_plot
+
+byDecade <- group_by(d_filt, decade)
+(results <- summarise(
+  byDecade,
+  n_cases = n(),
+  mu = mean(runtimeMinutes, na.rm = TRUE),
+  sigma = sqrt(sum((runtimeMinutes - mean(runtimeMinutes))^2 / length(runtimeMinutes)))))
+
+d20 <- filter(d_filt, decade == "1920s")
+d30 <- filter(d_filt, decade == "1930s")
+d40 <- filter(d_filt, decade == "1940s")
+d50 <- filter(d_filt, decade == "1950s")
+d60 <- filter(d_filt, decade == "1960s")
+d70 <- filter(d_filt, decade == "1970s")
+
+r20 <- sample_n(d20, 100)
+r30 <- sample_n(d30, 100)
+r40 <- sample_n(d40, 100)
+r50 <- sample_n(d50, 100)
+r60 <- sample_n(d60, 100)
+r70 <- sample_n(d70, 100)
+
+(m20 <- mean(r20$runtimeMinutes))
+(sd20 <- sd(r20$runtimeMinutes))
+(se20 <- sd20/sqrt(100))
+
+(m30 <- mean(r30$runtimeMinutes))
+(sd30 <- sd(r30$runtimeMinutes))
+(se30 <- sd30/sqrt(100))
+
+(m40 <- mean(r40$runtimeMinutes))
+(sd40 <- sd(r40$runtimeMinutes))
+(se40 <- sd40/sqrt(100))
+
+(m50 <- mean(r50$runtimeMinutes))
+(sd50 <- sd(r50$runtimeMinutes))
+(se50 <- sd50/sqrt(100))
+
+(m60 <- mean(r60$runtimeMinutes))
+(sd60 <- sd(r60$runtimeMinutes))
+(se60 <- sd60/sqrt(100))
+
+(m70 <- mean(r70$runtimeMinutes))
+(sd70 <- sd(r70$runtimeMinutes))
+(se70 <- sd70/sqrt(100))
+
+(m_pop20 <- mean(d20$runtimeMinutes))
+sd_pop20 <- sqrt(sum((d20$runtimeMinutes - mean(d20$runtimeMinutes))^2 / length(d20$runtimeMinutes)))
+(se_pop20 <- sd_pop20/sqrt(length(d20$runtimeMinutes)))
+
+(m_pop30 <- mean(d30$runtimeMinutes))
+sd_pop30 <- sqrt(sum((d30$runtimeMinutes - mean(d30$runtimeMinutes))^2 / length(d30$runtimeMinutes)))
+(se_pop30 <- sd_pop30/sqrt(length(d30$runtimeMinutes)))
+
+(m_pop40 <- mean(d40$runtimeMinutes))
+sd_pop40 <- sqrt(sum((d40$runtimeMinutes - mean(d40$runtimeMinutes))^2 / length(d40$runtimeMinutes)))
+(se_pop40 <- sd_pop40/sqrt(length(d40$runtimeMinutes)))
+
+(m_pop50 <- mean(d50$runtimeMinutes))
+sd_pop50 <- sqrt(sum((d50$runtimeMinutes - mean(d50$runtimeMinutes))^2 / length(d50$runtimeMinutes)))
+(se_pop50 <- sd_pop50/sqrt(length(d50$runtimeMinutes)))
+
+(m_pop60 <- mean(d60$runtimeMinutes))
+sd_pop60 <- sqrt(sum((d60$runtimeMinutes - mean(d60$runtimeMinutes))^2 / length(d60$runtimeMinutes)))
+(se_pop60 <- sd_pop60/sqrt(length(d60$runtimeMinutes)))
+
+(m_pop70 <- mean(d70$runtimeMinutes))
+sd_pop70 <- sqrt(sum((d70$runtimeMinutes - mean(d70$runtimeMinutes))^2 / length(d70$runtimeMinutes)))
+(se_pop70 <- sd_pop70/sqrt(length(d70$runtimeMinutes)))
+```
+
+The population and sample means, standard deviation, and standard error are very similar to each other.
+
+``` {r}
+k <- 10000
+n <- 100
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d20$runtimeMinutes, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d30$runtimeMinutes, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d40$runtimeMinutes, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d50$runtimeMinutes, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d60$runtimeMinutes, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d70$runtimeMinutes, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+```
+
+## Challenge 2
+
+```{r}
+(less_than_13 <- ppois(13, 18, lower.tail = TRUE))
+(no_calls <- dpois(0, 18))
+(exactly_7 <- dpois(0, 18))
+(more_than_20 <- ppois(20, 18, lower.tail = FALSE))
+
+library(mosaic)
+p_plot <- 
+  plotDist(
+    "pois",
+    18,
+    main = "Poisson Distribution of Monkey Calls",
+    xlab = "Number of Calls",
+    ylab = "Probability",
+    xlim = c(0, 40)
+    )
+p_plot
+
+r <- rpois(520, 18)
+mean <- mean(r)
+sd <- sd(r)
+r_plot <- histogram(r, center = mean, main = "Random Poisson Distribution of Monkey Calls", xlab = "Number of Calls", ylab = "Probability", xlim = c(0, 40))
+r_plot
+```
+
+The shape of the probability mass function compared to these simulated results look very similar. The random Poisson distribution does not look as smooth as the probability mass function, but as the "n" values increase past 520, this is expected to smoothen out.
+
+## Challenge 3
+
+```{r}
+f <- "https://raw.githubusercontent.com/difiore/ADA-datasets/master/zombies.csv"
+d <- read_csv(f, col_names = TRUE)
+
+pop_sd <- function(x) {
+  sqrt(sum((x - mean(x))^2) / (length(x)))
+}
+
+pop_stats <- tibble(
+  m_height = mean(d$height),
+  sd_height = pop_sd(d$height),
+  m_weight = mean(d$weight),
+  sd_weight = pop_sd(d$weight),
+  m_kill = mean(d$zombies_killed),
+  sd_kill = pop_sd(d$zombies_killed),
+  m_edu = mean(d$years_of_education),
+  sd_edu = pop_sd(d$years_of_education),
+  m_age = mean(d$age),
+  sd_age = pop_sd(d$age)
+)
+pop_stats
+
+z_plot <- ggplot(data = d, aes(
+  x = d$age,
+  y = d$height
+  ))
+z_plot <- z_plot + xlab("Age") + ylab("Height")
+z_plot <- z_plot + geom_point(na.rm = TRUE)
+z_plot
+
+z_plot <- ggplot(data = d, aes(
+  x = d$age,
+  y = d$weight
+  ))
+z_plot <- z_plot + xlab("Age") + ylab("Weight")
+z_plot <- z_plot + geom_point(na.rm = TRUE)
+z_plot
+```
+
+Height vs. age seem to positively correlate better than weight vs. age. There is also less variability in the scatterplot for height vs. age.
+
+``` {r}
+histogram(d$height)
+qqnorm(d$height, main = "QQ Plot - Height")
+qqline(d$height, col = "gray")
+
+histogram(d$weight)
+qqnorm(d$weight, main = "QQ Plot - Weight")
+qqline(d$weight, col = "gray")
+
+histogram(d$zombies_killed)
+qqnorm(d$zombies_killed, main = "QQ Plot - Zombies Killed")
+qqline(d$zombies_killed, col = "gray")
+
+histogram(d$years_of_education)
+qqnorm(d$years_of_education, main = "QQ Plot - Years of Education")
+qqline(d$years_of_education, col = "gray")
+
+histogram(d$age)
+qqnorm(d$age, main = "QQ Plot - Age")
+qqline(d$age, col = "gray")
+```
+
+The variables height, weight, and age are normally distributed. Years of education is also somewhat normally distributed, whereas the variable zombies killed seems the least normally distributed and resembles a Poisson distribution.
+
+```{r}
+d_samp <- sample_n(d, 30, replace = FALSE)
+samp_stats <- tibble(
+  m_height = mean(d_samp$height),
+  sd_height = sd(d_samp$height),
+  se_height = sd_height / sqrt(30),
+  m_weight = mean(d_samp$weight),
+  sd_weight = sd(d_samp$weight),
+  se_weight = sd_weight / sqrt(30),
+  m_kill = mean(d_samp$zombies_killed),
+  sd_kill = sd(d_samp$zombies_killed),
+  se_kill = sd_kill / sqrt(30),
+  m_edu = mean(d_samp$years_of_education),
+  sd_edu = sd(d_samp$years_of_education),
+  se_edu = sd_edu / sqrt(30),
+  m_age = mean(d_samp$age),
+  sd_age = sd(d_samp$age),
+  se_age = sd_age / sqrt(30)
+)
+samp_stats
+
+CI <- function(x, level = 0.95) {
+  alpha <- 1 - level
+  ci <- mean(x) + c(-1, 1) * qnorm(1 - (alpha / 2)) * sqrt(var(x) / length(x))
+  return(ci)
+}
+
+CI(d_samp$height)
+CI(d_samp$weight)
+CI(d_samp$zombies_killed)
+CI(d_samp$years_of_education)
+CI(d_samp$age)
+
+k <- 99
+n <- 30
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d_samp$height, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d_samp$weight, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d_samp$zombies_killed, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d_samp$years_of_education, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+
+s <- list(length = k)
+for (i in 1:k) {
+  s[[i]] <- sample(d_samp$age, size = n, replace = FALSE)
+}
+m <- vector(length = k)
+for (i in 1:k) {
+  m[[i]] <- mean(s[[i]], na.rm = TRUE)
+}
+(mean(m))
+q <- vector(length = k)
+for (i in 1:k) {
+  q[[i]] <- sd(s[[i]], na.rm = TRUE)
+}
+(mean(q))
+```
+
+The sample means and standard deviations are remarkably similar to the population means and standard deviations. These sampling distributions are normally distributed and comply with the central limit theorem. 
